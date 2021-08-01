@@ -12,7 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
-    TextView text_1,text_2;
+    TextView text_1, text_2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,15 +22,16 @@ public class MainActivity extends AppCompatActivity {
         text_1 = findViewById(R.id.text_1);
         text_2 = findViewById(R.id.text_2);
 
+        //네트워크 연결가능 test
         try {
-            ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+            ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
 
-            if(networkInfo != null && networkInfo.isConnected()){ //네트워크 연결 가능여부
-                Toast.makeText(getApplicationContext(),"Network is connected",Toast.LENGTH_LONG).show();
+            if (networkInfo != null && networkInfo.isConnected()) { //네트워크 연결 가능여부
+                Toast.makeText(getApplicationContext(), "Network is connected", Toast.LENGTH_LONG).show();
                 new DownloadJson().execute(); // 필요한 경우 인자 전달
-            }else{
-                Toast.makeText(getApplicationContext(),"Network isn't connected",Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(getApplicationContext(), "Network isn't connected", Toast.LENGTH_LONG).show();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -38,25 +39,26 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    //getTicker api 가져옴
     private class DownloadJson extends AsyncTask<StringBuffer, StringBuffer, String> {
         @Override
         protected String doInBackground(StringBuffer... arg0) { //... :  복수의 데이터를 전송 가능
-            try{
+            try {
                 GetChickenBithumbAPI getChickenBithumbAPI = new GetChickenBithumbAPI();
-                StringBuffer s = getChickenBithumbAPI.GetTicker("BTC","KRW");
+                StringBuffer s = getChickenBithumbAPI.GetTicker("BTC", "KRW");
 
                 return String.valueOf(s);
 
-            }catch (Exception e){
+            } catch (Exception e) {
                 return null;
             }
         }
-        protected  void onPostExecute(String result){ //스레드 작업이 모두 끝난 후 수행할 작업
+
+        protected void onPostExecute(String result) { //스레드 작업이 모두 끝난 후 수행할 작업
             text_2.setText(result);
         }
 
     }
-
 
 
 }
