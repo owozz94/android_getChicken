@@ -2,11 +2,17 @@ package org.teghtown.getchicken;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
-    TextView text_1;
+    TextView text_1,text_2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -14,16 +20,43 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         text_1 = findViewById(R.id.text_1);
+        text_2 = findViewById(R.id.text_2);
 
-        GetChickenBithumbAPI test = new GetChickenBithumbAPI();
         try {
+            ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
 
-            text_1.setText(test.GetTicker("BTC","KRW"));
+            if(networkInfo != null && networkInfo.isConnected()){ //네트워크 연결 가능여부
+                Toast.makeText(getApplicationContext(),"Network is connected",Toast.LENGTH_LONG).show();
+                new DownloadJson().execute(); // 필요한 경우 인자 전달
+            }else{
+                Toast.makeText(getApplicationContext(),"Network isn't connected",Toast.LENGTH_LONG).show();
+            }
         } catch (Exception e) {
-            text_1.setText(e.toString());
             e.printStackTrace();
+            text_2.setText(e.toString());
+        }
+    }
+
+    private class DownloadJson extends AsyncTask<StringBuffer, StringBuffer, String> {
+        @Override
+        protected String doInBackground(StringBuffer... arg0) { //... :  복수의 데이터를 전송 가능
+            try{
+                GetChickenBithumbAPI getChickenBithumbAPI = new GetChickenBithumbAPI();
+                StringBuffer s = getChickenBithumbAPI.GetTicker("BTC","KRW");
+
+                return String.valueOf(s);
+
+            }catch (Exception e){
+                return null;
+            }
+        }
+        protected  void onPostExecute(String result){ //스레드 작업이 모두 끝난 후 수행할 작업
+            text_2.setText(result);
         }
 
     }
+
+
 
 }
