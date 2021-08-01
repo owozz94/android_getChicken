@@ -51,8 +51,9 @@ public class MainActivity extends AppCompatActivity {
 
                 String s = sb.toString(); //json object로 만들어야됨.
                 JSONObject jsonObject = new JSONObject(s);
-                JSONObject data = (JSONObject)jsonObject.get("data");
-                String opening_price = (String)data.get("opening_price");
+                
+                JSONObject data = (JSONObject)jsonObject.get("data"); //상위 data 키만 뺴옴
+                String opening_price = (String)data.get("opening_price"); //data 하위 트리의 opening_price 키의 값만 뺴옴
 
                 return opening_price;
 
