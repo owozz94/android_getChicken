@@ -11,6 +11,8 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONObject;
+
 public class MainActivity extends AppCompatActivity {
     TextView text_1, text_2;
 
@@ -45,9 +47,14 @@ public class MainActivity extends AppCompatActivity {
         protected String doInBackground(StringBuffer... arg0) { //... :  복수의 데이터를 전송 가능
             try {
                 GetChickenBithumbAPI getChickenBithumbAPI = new GetChickenBithumbAPI();
-                StringBuffer s = getChickenBithumbAPI.GetTicker("BTC", "KRW");
+                StringBuffer sb = getChickenBithumbAPI.GetTicker("BTC", "KRW");
 
-                return String.valueOf(s);
+                String s = sb.toString(); //json object로 만들어야됨.
+                JSONObject jsonObject = new JSONObject(s);
+                JSONObject data = (JSONObject)jsonObject.get("data");
+                String opening_price = (String)data.get("opening_price");
+
+                return opening_price;
 
             } catch (Exception e) {
                 return null;
